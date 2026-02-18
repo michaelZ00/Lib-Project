@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import './App.css'
+import BookCard from './components/BookCard';
 const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY
 interface Book {
   id: string;
   volumeInfo: {
     title: string;
     authors?: string[];
+    previewLink: string; 
     imageLinks?: {
       thumbnail: string;
     };
@@ -41,6 +43,12 @@ function App() {
         />
         <button type="submit">Search</button>
       </form>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        {books.map((book) => (
+          <BookCard key={book.id} {...book} />
+        ))}
+      </div>
     </div>
   )
 }
