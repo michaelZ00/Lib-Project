@@ -59,7 +59,7 @@ useEffect(() => {
       ) : savedBooks.length > 0 ? (
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl mx-auto justify-items-center">
           {savedBooks.map((book) => (
-            <BookCard key={book.id} {...book} />
+            <BookCard key={book.id} {...book} icon={true} />
           ))}
         </div>
       ) : (

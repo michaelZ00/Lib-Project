@@ -3,6 +3,17 @@ import placeholder from '../assets/placeholder.jpg';
 
 // הגדרת הטיפוסים (Interface)
 interface BookCardProps {
+  icon:boolean;
+  id: string;
+  volumeInfo: {
+    title: string;
+    authors?: string[];
+    imageLinks?: {
+      thumbnail: string;
+    };
+  };
+}
+interface Book {
   id: string;
   volumeInfo: {
     title: string;
@@ -13,13 +24,13 @@ interface BookCardProps {
   };
 }
 
-function BookCard({ id, volumeInfo }: BookCardProps) {
+function BookCard({ id, volumeInfo, icon }: BookCardProps) {
   const [insavedBooks, setInsavedBooks] = useState<boolean>(false);
 
   useEffect(() => {
     try {
       const items = window.localStorage.getItem('savedBooks');
-      const savedbooks:   BookCardProps[] = items ? JSON.parse(items) : [];
+      const savedbooks:   Book[] = items ? JSON.parse(items) : [];
       if (savedbooks.some(book => book.id === id)) {
         setInsavedBooks(true);
       }
@@ -33,7 +44,7 @@ function BookCard({ id, volumeInfo }: BookCardProps) {
     e.stopPropagation(); // מונע מהלחיצה להשפיע על אלמנטים שעוטפים את הכרטיס
     try {
       const items = window.localStorage.getItem('savedBooks');
-      let booklist: BookCardProps[] = items ? JSON.parse(items) : [];
+      let booklist: Book[] = items ? JSON.parse(items) : [];
       const bookIndex = booklist.findIndex(book => book.id === id);
 
       if (bookIndex > -1) {
@@ -54,12 +65,14 @@ function BookCard({ id, volumeInfo }: BookCardProps) {
     <div className="w-[350px] relative border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col items-center bg-white">
       
       {/* כפתור ה-Wishlist (Bookmark) */}
-      <div
+      {  icon === insavedBooks && (
+
+        <div
         role="button"
         tabIndex={0}
         onClick={handleSavedbooksToggle}
         className="
-          absolute top-2 right-2 
+        absolute top-2 right-2 
           inline-flex items-center justify-center 
           w-10 h-10 
           rounded-full 
@@ -70,36 +83,37 @@ function BookCard({ id, volumeInfo }: BookCardProps) {
           hover:border-blue-100 
           hover:bg-blue-50/50
           active:scale-90
-        "
-        aria-label={insavedBooks ? 'Remove from saved books' : 'Add to saved books'}
-      >
+          "
+          aria-label={insavedBooks ? 'Remove from saved books' : 'Add to saved books'}
+          >
         <svg 
           viewBox="0 0 24 24"
           className={`w-6 h-6 transition-colors duration-300 ${
             insavedBooks ? 'text-blue-500 fill-blue-500' : 'text-gray-400 fill-none'
-          }`}
-          stroke="currentColor" 
-          strokeWidth="2"
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-        >
+            }`}
+            stroke="currentColor" 
+            strokeWidth="2"
+            strokeLinecap="round" 
+            strokeLinejoin="round"
+            >
           <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
         </svg>
       </div>
+            )}
 
       {/* תמונת הכריכה */}
       <img
-        src={volumeInfo.imageLinks?.thumbnail || placeholder}
-        alt={volumeInfo.title}
-        className="mb-4 w-32 h-48 object-cover rounded shadow-sm"
+      src={volumeInfo.imageLinks?.thumbnail || placeholder}
+      alt={volumeInfo.title}
+      className="mb-4 w-32 h-48 object-cover rounded shadow-sm"
       />
 
       {/* פרטי הספר */}
       <h3 className="font-bold text-lg text-center line-clamp-2 min-h-[3.5rem]">
-        {volumeInfo.title}
+        Title: {volumeInfo.title}
       </h3>
       <p className="text-gray-600 text-sm text-center mt-2 line-clamp-1">
-        {volumeInfo.authors?.join(", ") || "Unknown Author"}
+        Author: {volumeInfo.authors?.join(", ") || "Unknown Author"}
       </p>
     </div>
   );

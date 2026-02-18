@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import BookCard from './components/BookCard';
 
 const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY;
-type FetchBooksParams = {
-  searchQuery: string;
-  page: number;
-};
+// type FetchBooksParams = {
+//   searchQuery: string;
+//   page: number;
+// };
 const RESULTS_PER_PAGE = 12;
 
 interface Book {
@@ -110,7 +110,7 @@ function Library() {
       <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl mx-auto justify-items-center">
   {/* כאן נכנס התוכן שלך */}
         {books.map((book) => (
-          <BookCard key={book.id} {...book} />
+          <BookCard key={book.id} {...book} icon={false} />
         ))}
       </div>
 {/* כפתורי דפדוף (Pagination) */}
