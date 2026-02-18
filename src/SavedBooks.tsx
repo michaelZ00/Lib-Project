@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import BookCard from './components/BookCard';
-import Navbar from './components/NavBar';
 
 const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY;
 

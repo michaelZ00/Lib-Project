@@ -9,10 +9,12 @@ function App() {
   
     <div className="app">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Library />} />
-        <Route path="/SavedBooks" element={<SavedBooks />} />
-      </Routes>
+      <main className="pt-16">
+        <Routes>
+          <Route path="/" element={<Library />} />
+          <Route path="/SavedBooks" element={<SavedBooks />} />
+        </Routes>
+      </main>
     </div>
   )
 }
