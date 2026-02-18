@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BookCard from './components/BookCard';
+import type { Book } from './types';
 
 const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY;
 // type FetchBooksParams = {
@@ -7,18 +8,6 @@ const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY;
 //   page: number;
 // };
 const RESULTS_PER_PAGE = 12;
-
-interface Book {
-  id: string;
-  volumeInfo: {
-    title: string;
-    authors?: string[];
-    previewLink: string;
-    imageLinks?: {
-      thumbnail: string;
-    };
-  };
-}
 
 
 

@@ -1,64 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import placeholder from '../assets/placeholder.jpg';
+import type { Book } from '../types';
+import { isBookSaved, toggleBookInStorage } from '../storage';
 
-// הגדרת הטיפוסים (Interface)
-interface BookCardProps {
-  icon:boolean;
-  id: string;
-  volumeInfo: {
-    title: string;
-    authors?: string[];
-    imageLinks?: {
-      thumbnail: string;
-    };
-  };
-}
-interface Book {
-  id: string;
-  volumeInfo: {
-    title: string;
-    authors?: string[];
-    imageLinks?: {
-      thumbnail: string;
-    };
-  };
+interface BookCardProps extends Book {
+  icon: boolean;
 }
 
 function BookCard({ id, volumeInfo, icon }: BookCardProps) {
   const [insavedBooks, setInsavedBooks] = useState<boolean>(false);
 
   useEffect(() => {
-    try {
-      const items = window.localStorage.getItem('savedBooks');
-      const savedbooks:   Book[] = items ? JSON.parse(items) : [];
-      if (savedbooks.some(book => book.id === id)) {
-        setInsavedBooks(true);
-      }
-    } catch (error) {
-      console.error('Error reading saved books from localStorage', error);
-    }
+    setInsavedBooks(isBookSaved(id));
   }, [id]);
 
-  // פונקציה להוספה/הסרה מהרשימה
-  const handleSavedbooksToggle = (e: React.MouseEvent) => {
-    e.stopPropagation(); // מונע מהלחיצה להשפיע על אלמנטים שעוטפים את הכרטיס
-    try {
-      const items = window.localStorage.getItem('savedBooks');
-      let booklist: Book[] = items ? JSON.parse(items) : [];
-      const bookIndex = booklist.findIndex(book => book.id === id);
 
-      if (bookIndex > -1) {
-        booklist.splice(bookIndex, 1);
-        setInsavedBooks(false);
-      } else {
-        booklist.push({ id, volumeInfo });
-        setInsavedBooks(true);
-      }
-      window.localStorage.setItem('savedBooks', JSON.stringify(booklist));
-      window.dispatchEvent(new Event("SavedbooksUpdate")); // שליחת אירוע מותאם אישית לעדכון ה-Navbar וה-SavedBooks
-    } catch (error) {
-      console.error('Error updating saved books in localStorage', error);
-    }
+  const handleSavedbooksToggle = (e: React.MouseEvent) => {
+    e.stopPropagation(); 
+    const isSaved = toggleBookInStorage({ id, volumeInfo });
+    setInsavedBooks(isSaved);
   };
 
   return (
