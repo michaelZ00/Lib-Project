@@ -40,10 +40,9 @@ useEffect(() => {
     setLoading(false);
   };
 
-  // הפעלה ראשונית בטעינת הדף
+
   fetchAndSetBooks();
 
-  // האזנה לאירועים - עכשיו הם מפעילים את הפונקציה שמעדכנת את ה-State
   window.addEventListener("SavedbooksUpdate", fetchAndSetBooks);
   window.addEventListener("storage", fetchAndSetBooks);
 
@@ -55,19 +54,17 @@ useEffect(() => {
 
   return (
     <div className="app flex flex-col justify-start items-center w-full min-h-screen pt-4 px-4">
-      {/* <h1 className="mt-0 mb-6">Saved Books</h1> */}
-
       {loading ? (
         <p>Loading saved books...</p>
       ) : savedBooks.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl mx-auto justify-items-center">
           {savedBooks.map((book) => (
             <BookCard key={book.id} {...book} />
           ))}
         </div>
       ) : (
         <div className="text-center mt  -8">
-          <p>No saved books found. Add some to your wishlist!</p>
+          <p>No saved books found. </p>
         </div>         
       )}
     </div>
