@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 import BookCard from './components/BookCard';
 const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY
@@ -17,7 +17,6 @@ interface Book {
 function App() {
   const [query, setQuery] = useState('')
   const [books, setBooks] = useState<Book[]>([])
-
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
