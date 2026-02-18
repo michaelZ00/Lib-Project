@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import BookCard from './components/BookCard';
 
-const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY;
 
 interface Book {
   id: string;
@@ -18,43 +17,45 @@ interface Book {
 function SavedBooks() {
   const [savedBooks, setSavedBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const getSavedBooks = (): Book[] => {
+  try {
+    const items = window.localStorage.getItem('savedBooks');
+    
+    // אם אין כלום ב-LocalStorage, נחזיר מערך ריק
+    if (!items) return [];
 
-  useEffect(() => {
-    const fetchSavedBooks = async () => {
-      try {
-        const items = window.localStorage.getItem('wishlist');
-        const wishlist: string[] = items ? JSON.parse(items) : [];
+    // הופכים את הטקסט חזרה למערך של אובייקטים
+    return JSON.parse(items);
+  } catch (error) {
+    // במקרה שיש שגיאה ב-Parsing (למשל טקסט לא תקין)
+    console.error('Could not parse saved books from localStorage', error);
+    return [];
+  }
+};
+useEffect(() => {
+  // פונקציה שגם שולפת וגם מעדכנת את המסך
+  const fetchAndSetBooks = () => {
+    const data = getSavedBooks();
+    setSavedBooks(data);
+    setLoading(false);
+  };
 
-        if (wishlist.length === 0) {
-          setSavedBooks([]);
+  // הפעלה ראשונית בטעינת הדף
+  fetchAndSetBooks();
 
-          
-          setLoading(false);
-          return;
-        }
+  // האזנה לאירועים - עכשיו הם מפעילים את הפונקציה שמעדכנת את ה-State
+  window.addEventListener("SavedbooksUpdate", fetchAndSetBooks);
+  window.addEventListener("storage", fetchAndSetBooks);
 
-        // Fetch details for each book ID in the wishlist
-        const bookPromises = wishlist.map((id) =>
-          fetch(`https://www.googleapis.com/books/v1/volumes/${id}?key=${apiKEY}`).then((res) =>
-            res.json()
-          )
-        );
-
-        const results = await Promise.all(bookPromises);
-        setSavedBooks(results);
-      } catch (error) {
-        console.error('Error fetching saved books:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSavedBooks();
-  }, []);
+  return () => {
+    window.removeEventListener("SavedbooksUpdate", fetchAndSetBooks);
+    window.removeEventListener("storage", fetchAndSetBooks);
+  };
+}, []);
 
   return (
-    <div className="app">
-      <h1 className="mt-0 mb-6">Saved Books</h1>
+    <div className="app flex flex-col justify-start items-center w-full min-h-screen pt-4 px-4">
+      {/* <h1 className="mt-0 mb-6">Saved Books</h1> */}
 
       {loading ? (
         <p>Loading saved books...</p>

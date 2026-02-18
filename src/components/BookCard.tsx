@@ -14,39 +14,39 @@ interface BookCardProps {
 }
 
 function BookCard({ id, volumeInfo }: BookCardProps) {
-  const [inWishlist, setInWishlist] = useState<boolean>(false);
+  const [insavedBooks, setInsavedBooks] = useState<boolean>(false);
 
-  // בדיקה אם הספר כבר קיים ב-Wishlist בטעינה הראשונה
   useEffect(() => {
     try {
-      const items = window.localStorage.getItem('wishlist');
-      const wishlist: string[] = items ? JSON.parse(items) : [];
-      if (wishlist.includes(id)) {
-        setInWishlist(true);
+      const items = window.localStorage.getItem('savedBooks');
+      const savedbooks:   BookCardProps[] = items ? JSON.parse(items) : [];
+      if (savedbooks.some(book => book.id === id)) {
+        setInsavedBooks(true);
       }
     } catch (error) {
-      console.error('Error reading wishlist from localStorage', error);
+      console.error('Error reading saved books from localStorage', error);
     }
   }, [id]);
 
   // פונקציה להוספה/הסרה מהרשימה
-  const handleWishlistToggle = (e: React.MouseEvent) => {
+  const handleSavedbooksToggle = (e: React.MouseEvent) => {
     e.stopPropagation(); // מונע מהלחיצה להשפיע על אלמנטים שעוטפים את הכרטיס
     try {
-      const items = window.localStorage.getItem('wishlist');
-      let wishlist: string[] = items ? JSON.parse(items) : [];
-      const bookIndex = wishlist.indexOf(id);
+      const items = window.localStorage.getItem('savedBooks');
+      let booklist: BookCardProps[] = items ? JSON.parse(items) : [];
+      const bookIndex = booklist.findIndex(book => book.id === id);
 
       if (bookIndex > -1) {
-        wishlist.splice(bookIndex, 1);
-        setInWishlist(false);
+        booklist.splice(bookIndex, 1);
+        setInsavedBooks(false);
       } else {
-        wishlist.push(id);
-        setInWishlist(true);
+        booklist.push({ id, volumeInfo });
+        setInsavedBooks(true);
       }
-      window.localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      window.localStorage.setItem('savedBooks', JSON.stringify(booklist));
+      window.dispatchEvent(new Event("SavedbooksUpdate")); // שליחת אירוע מותאם אישית לעדכון ה-Navbar וה-SavedBooks
     } catch (error) {
-      console.error('Error updating wishlist in localStorage', error);
+      console.error('Error updating saved books in localStorage', error);
     }
   };
 
@@ -57,7 +57,7 @@ function BookCard({ id, volumeInfo }: BookCardProps) {
       <div
         role="button"
         tabIndex={0}
-        onClick={handleWishlistToggle}
+        onClick={handleSavedbooksToggle}
         className="
           absolute top-2 right-2 
           inline-flex items-center justify-center 
@@ -71,12 +71,12 @@ function BookCard({ id, volumeInfo }: BookCardProps) {
           hover:bg-blue-50/50
           active:scale-90
         "
-        aria-label={inWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
+        aria-label={insavedBooks ? 'Remove from saved books' : 'Add to saved books'}
       >
         <svg 
           viewBox="0 0 24 24"
           className={`w-6 h-6 transition-colors duration-300 ${
-            inWishlist ? 'text-blue-500 fill-blue-500' : 'text-gray-400 fill-none'
+            insavedBooks ? 'text-blue-500 fill-blue-500' : 'text-gray-400 fill-none'
           }`}
           stroke="currentColor" 
           strokeWidth="2"
