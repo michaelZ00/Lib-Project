@@ -70,7 +70,7 @@ useEffect(() => {
   const currentBooks = savedBooks.slice(startIndex, startIndex + RESULTS_PER_PAGE);
 
   return (
-    <div className="app flex flex-col justify-start items-center w-full min-h-[calc(100vh-4rem)] pt-4 px-4">
+    <div className="app flex flex-col justify-start items-center w-full min-h-[calc(100vh-4rem)] pt-4 px-4 pb-16">
       {loading ? (
         <BookGrid books={[]} loading={true} />
       ) : savedBooks.length > 0 ? (
@@ -85,14 +85,16 @@ useEffect(() => {
           </div>
           <BookGrid books={currentBooks} loading={false} icon={true} />
           
-          {totalItems > RESULTS_PER_PAGE && (
-            <Pagination 
-              currentPage={currentPage} 
-              totalPages={totalPages} 
-              handlePageChange={handlePageChange}
-              disableNext={currentPage === totalPages}
-            />
-          )}
+ {totalItems > RESULTS_PER_PAGE ? (
+  <Pagination 
+    currentPage={currentPage} 
+    totalPages={totalPages} 
+    handlePageChange={handlePageChange}
+    disableNext={currentPage === totalPages}
+  />
+) : (
+  <div style={{ height: '10px' }} aria-hidden="true" />
+)}
         </div>
       ) : (
         <div className="text-center mt  -8">
