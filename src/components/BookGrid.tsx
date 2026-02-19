@@ -22,8 +22,8 @@ function BookGrid({ books, loading, icon = false }: BookGridProps) {
 
   return (
     <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl mx-auto justify-items-center">
-      {books.map((book) => (
-        <BookCard key={book.id} {...book} icon={icon} />
+      {books.map((book , index) => (
+        <BookCard key={index} {...book} icon={icon} />
       ))}
     </div>
   );

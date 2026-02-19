@@ -6,9 +6,8 @@ import React, { useState } from 'react';
 import type { Book } from './types';
 import SearchForm from './components/SearchForm';
 import BookGrid from './components/BookGrid';
-import Pagination from './components/Pagination';
 
-const apiKEY = import.meta.env.VITE_API_KEY;
+const apiKEY = "AIzaSyC62FNaMyKEaWAWefbkf0KxUPPZANQCoCw";
 const RESULTS_PER_PAGE = 12;
 
 
@@ -42,10 +41,15 @@ function Library() {
       const data = await response.json();
       
       if (data.items) {
-        setBooks(data.items);
-        setTotalItems(data.totalItems || 0);
+        if (page === 1) {
+          setBooks(data.items);
+        } else {
+          setBooks((prev) => [...prev, ...data.items]);
+        }
+
+        setTotalItems( data.totalItems|| 0);
       } else {
-        setBooks([]);
+        // setBooks([]);
         setTotalItems(0);
         if (page === 1) setGuide('No books found for this search.');
       }
@@ -73,16 +77,14 @@ function Library() {
   };
 
   /**
-   * Handles page changes, triggering a new fetch for the selected page.
-   * @param pageNumber The new page number.
+   * Handles loading more books.
    */
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    fetchBooks(query, pageNumber);
-    window.scrollTo({ top: 0, behavior: 'smooth' }); 
+  const handleLoadMore = () => {
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    fetchBooks(query, nextPage);
   };
 
-  const totalPages = Math.min(Math.ceil(totalItems / RESULTS_PER_PAGE), 25);
   return (
     <div className="flex flex-col justify-start items-center w-full min-h-[calc(100vh-4rem)] pt-4 px-4">
       <SearchForm query={query} setQuery={setQuery} handleSearch={handleSearch} />
@@ -91,15 +93,29 @@ function Library() {
           <p>{guide}</p>
       </div>
       
-      <BookGrid books={books} loading={loading} />
+      <BookGrid books={books} loading={loading && currentPage === 1} />
+
+      {loading && currentPage > 1 && (
+        <div className="flex justify-center items-center w-full p-4 mt-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+        </div>
+      )}
 
       {!loading && books.length > 0 && (
-        <Pagination 
-          currentPage={currentPage} 
-          totalPages={totalPages} 
-          handlePageChange={handlePageChange}
-          disableNext={currentPage === totalPages || books.length < RESULTS_PER_PAGE}
-        />
+        books.length < totalItems ? (
+          <div className="flex justify-center mt-8 mb-16">
+            <button
+              onClick={handleLoadMore}
+              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-md"
+            >
+              Load More
+            </button>
+          </div>
+        ) : (
+          <div className="text-center mt-8 mb-16 text-gray-500 font-medium">
+            <p>No more books to load.</p>
+          </div>
+        )
       )}
     </div>
   );
