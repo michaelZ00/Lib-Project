@@ -8,7 +8,7 @@ import SearchForm from './components/SearchForm';
 import BookGrid from './components/BookGrid';
 import Pagination from './components/Pagination';
 
-const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY;
+const apiKEY = import.meta.env.VITE_API_KEY;
 const RESULTS_PER_PAGE = 12;
 
 
