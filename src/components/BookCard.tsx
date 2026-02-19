@@ -3,7 +3,7 @@
  * Displays book details and handles the save/remove functionality.
  */
 import React, { useState, useEffect } from 'react';
-import placeholder from '../assets/placeholder.jpg';
+import placeholder from '../assets/PlaceHolder.jpg';
 import type { Book } from '../types';
 import { isBookSaved, toggleBookInStorage } from '../storage';
 
