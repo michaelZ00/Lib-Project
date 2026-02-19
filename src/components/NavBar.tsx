@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { getSavedBooks } from "../storage";
 import loupe from '../assets/loupe.png';
+import logo from '../assets/logo.webp';
 
 function Navbar() {
   /**
@@ -32,7 +33,7 @@ function Navbar() {
         <div className="flex justify-between items-center h-full">
           <div className="font-bold text-xl text-blue-600">
             <img
-              src="/src/assets/logo.webp"
+              src={logo}
               alt="My Library Logo"
               className="h-12 w-12 object-contain" 
             />
@@ -40,7 +41,6 @@ function Navbar() {
           <div className="flex items-center space-x-6">
             <NavLink
               to="/"
-              end
               className={({ isActive }) =>
                 `hover:text-blue-500 font-medium transition-colors flex items-center ${
                   isActive ? "text-blue-600" : "text-gray-700"
