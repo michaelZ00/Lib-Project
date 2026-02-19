@@ -6,12 +6,7 @@ import React, { useState } from 'react';
 import type { Book } from './types';
 import SearchForm from './components/SearchForm';
 import BookGrid from './components/BookGrid';
-
-const apiKEY = import.meta.env.VITE_API_KEY;
-
-
-const RESULTS_PER_PAGE = 12;
-
+import { fetchBooksFromGoogle } from './api';
 
 
 function Library() {
@@ -21,7 +16,8 @@ function Library() {
   const [guide, setGuide] = useState('');
   const [loading, setLoading] = useState(false);
   
-
+//  current page help us to know which index to fetch from the google books api and also to know when to show the load more button
+// as long that we have more books to fetch
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
 
@@ -33,14 +29,8 @@ function Library() {
   const fetchBooks = async (searchQuery: string, page: number) => {
     setLoading(true);
     setGuide('');
-    const startIndex = (page - 1) * RESULTS_PER_PAGE;
-  // Combine title and author search for better results
-    const combinedQuery = `intitle:${searchQuery} OR inauthor:${searchQuery}`;
     try {
-      const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${combinedQuery}&startIndex=${startIndex}&maxResults=${RESULTS_PER_PAGE}&key=${apiKEY}`
-      );
-      const data = await response.json();
+      const data = await fetchBooksFromGoogle(searchQuery, page);
       
       if (data.items) {
         if (page === 1) {

@@ -27,7 +27,8 @@ useEffect(() => {
 
 
   fetchAndSetBooks();
-
+// Listen for custom events that indicate changes to saved books and update the list accordingly
+// and help us keee the saved books counter in the navbar updated as well
   window.addEventListener("SavedbooksUpdate", fetchAndSetBooks);
   window.addEventListener("storage", fetchAndSetBooks);
 
