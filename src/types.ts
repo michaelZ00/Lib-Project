@@ -4,7 +4,7 @@ export interface Book {
     title: string;
     authors?: string[];
     previewLink?: string;
-    description: string;
+    description?: string;
     imageLinks?: {
       thumbnail: string;
     };

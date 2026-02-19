@@ -1,9 +1,16 @@
+/**
+ * Navigation bar component that displays the logo, links, and saved books count.
+ */
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { getSavedBooks } from "../storage";
 
 function Navbar() {
-const getCount = () => {
+  /**
+   * Retrieves the current count of saved books from local storage.
+   * @returns The number of saved books.
+   */
+  const getCount = () => {
     return getSavedBooks().length;
   };
   const [savedBooksCount, setSavedBooksCount] = useState(getCount());
@@ -30,9 +37,14 @@ const getCount = () => {
             />
           </div>
           <div className="flex items-center space-x-6">
-            <Link
+            <NavLink
               to="/"
-              className="text-gray-700 hover:text-blue-500 font-medium transition-colors flex items-center"
+              end
+              className={({ isActive }) =>
+                `hover:text-blue-500 font-medium transition-colors flex items-center ${
+                  isActive ? "text-blue-600" : "text-gray-700"
+                }`
+              }
             >
               Library
               <img
@@ -40,12 +52,14 @@ const getCount = () => {
                 alt="Library Icon"
                 className="w-5 h-5 ml-1 opacity-70"
               />
-            </Link>
-
-            {/* Saved Books עם Badge */}
-            <Link
+            </NavLink>
+            <NavLink
               to="/savedbooks"
-              className="text-gray-700 hover:text-blue-500 font-medium transition-colors flex items-center gap-1 relative group"
+              className={({ isActive }) =>
+                `hover:text-blue-500 font-medium transition-colors flex items-center gap-1 relative group ${
+                  isActive ? "text-blue-600" : "text-gray-700"
+                }`
+              }
             >
               <span>Saved Books</span>
               <div className="relative">
@@ -65,7 +79,7 @@ const getCount = () => {
                   </span>
                 )}
               </div>
-            </Link>
+            </NavLink>
           </div>
         </div>
       </div>

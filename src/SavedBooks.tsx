@@ -1,14 +1,24 @@
+/**
+ * Page component that displays the list of books saved by the user.
+ * Includes pagination and functionality to clear all saved books.
+ */
 import { useState, useEffect } from 'react';
-import BookCard from './components/BookCard';
+import BookGrid from './components/BookGrid';
+import Pagination from './components/Pagination';
 import type { Book } from './types';
 import { getSavedBooks, clearSavedBooks } from './storage';
+
+const RESULTS_PER_PAGE = 12;
 
 function SavedBooks() {
   const [savedBooks, setSavedBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
 useEffect(() => {
-  // פונקציה שגם שולפת וגם מעדכנת את המסך
+  /**
+   * Fetches saved books from storage and updates the state.
+   */
   const fetchAndSetBooks = () => {
     const data = getSavedBooks();
     setSavedBooks(data);
@@ -27,16 +37,42 @@ useEffect(() => {
   };
 }, []);
 
+  // Adjust current page if items are removed and the current page becomes empty
+  useEffect(() => {
+    const totalPages = Math.ceil(savedBooks.length / RESULTS_PER_PAGE);
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [savedBooks.length, currentPage]);
+
+  /**
+   * Clears all saved books from storage after user confirmation.
+   */
   const handleClearAll = () => {
     if (window.confirm("Are you sure you want to remove all saved books?")) {
       clearSavedBooks();
+      setCurrentPage(1);
     }
   };
 
+  /**
+   * Handles page changes for pagination.
+   * @param pageNumber The new page number to navigate to.
+   */
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const totalItems = savedBooks.length;
+  const totalPages = Math.ceil(totalItems / RESULTS_PER_PAGE);
+  const startIndex = (currentPage - 1) * RESULTS_PER_PAGE;
+  const currentBooks = savedBooks.slice(startIndex, startIndex + RESULTS_PER_PAGE);
+
   return (
-    <div className="app flex flex-col justify-start items-center w-full min-h-screen pt-4 px-4">
+    <div className="app flex flex-col justify-start items-center w-full min-h-[calc(100vh-4rem)] pt-4 px-4">
       {loading ? (
-        <p>Loading saved books...</p>
+        <BookGrid books={[]} loading={true} />
       ) : savedBooks.length > 0 ? (
         <div className="w-full max-w-6xl mx-auto flex flex-col gap-6">
           <div className="flex justify-end w-full px-4">
@@ -47,11 +83,16 @@ useEffect(() => {
               Clear All
             </button>
           </div>
-          <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full justify-items-center">
-            {savedBooks.map((book) => (
-              <BookCard key={book.id} {...book} icon={true} />
-            ))}
-          </div>
+          <BookGrid books={currentBooks} loading={false} icon={true} />
+          
+          {totalItems > RESULTS_PER_PAGE && (
+            <Pagination 
+              currentPage={currentPage} 
+              totalPages={totalPages} 
+              handlePageChange={handlePageChange}
+              disableNext={currentPage === totalPages}
+            />
+          )}
         </div>
       ) : (
         <div className="text-center mt  -8">
