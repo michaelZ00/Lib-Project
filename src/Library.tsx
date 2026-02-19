@@ -7,7 +7,7 @@ import type { Book } from './types';
 import SearchForm from './components/SearchForm';
 import BookGrid from './components/BookGrid';
 
-const apiKEY = "AIzaSyC62FNaMyKEaWAWefbkf0KxUPPZANQCoCw";
+const apiKEY = import.meta.env.VITE_GOOGLE_BOOKS_KEY;
 const RESULTS_PER_PAGE = 12;
 
 
