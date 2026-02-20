@@ -5,6 +5,10 @@
 const apiKEY = import.meta.env.VITE_API_KEY;
 
 
+
+
+
+
 const RESULTS_PER_PAGE = 12;
 
 export const fetchBooksFromGoogle = async (searchQuery: string, page: number) => {
